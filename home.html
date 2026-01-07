@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚙️ SIG Industri & Tenaga Kerja Jawa Tengah 2023-2024</title>
+    <link rel="stylesheet" href="style_industrial.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* CSS Tambahan (Diambil dari respons sebelumnya dan ditambahkan modifikasi) */
+        
+        /* Kontrol Tombol Peta */
+        .map-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: #f8f8f8;
+            border-radius: 8px;
+        }
+        .map-controls button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Roboto', sans-serif;
+            font-weight: 700;
+            transition: background-color 0.3s, transform 0.1s;
+        }
+        .map-controls button.active {
+            background-color: #007bff;
+            color: white;
+        }
+        .map-controls button:not(.active) {
+            background-color: #e9ecef;
+            color: #495057;
+        }
+        .map-controls button:not(.active):hover {
+            background-color: #dee2e6;
+        }
+        
+        /* MODIFIKASI UTAMA: Flexbox Container untuk Peta dan Legenda */
+        .map-flex-container {
+            display: flex;
+            gap: 20px; /* Jarak antara peta dan legenda */
+            align-items: flex-start; /* Meratakan item di bagian atas */
+        }
+
+        .map-frame-container {
+            position: relative;
+            flex-grow: 1; /* Biarkan peta mengambil ruang yang tersisa */
+            max-width: 75%; /* Batasi lebar peta */
+            height: 500px; /* Tetapkan tinggi iframe */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .frame-peta {
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 8px;
+        }
+/* Container utama */
+.container {
+    max-width: 1200px;        /* Biar konten tidak terlalu melebar */
+    margin: 0 auto;           /* Tengah layar */
+    padding: 30px 40px;       /* JARAK KIRI-KANAN & ATAS-BAWAH */
+}
+
+/* Section */
+.industrial-section {
+    padding: 25px 30px;       /* Jarak isi section */
+}
+
+/* Paragraf teks */
+.industrial-section p {
+    line-height: 1.7;         /* Jarak antar baris */
+    margin-bottom: 15px;
+    text-align: justify;      /* Rapi kiri-kanan */
+}
+
+        .legend-container {
+            width: 25%; /* Alokasikan 25% lebar untuk legenda */
+            background-color: #ffffff;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            min-height: 500px; /* Samakan tingginya dengan peta agar konsisten */
+            font-family: 'Roboto', sans-serif;
+        }
+        
+        .legend-container h4 {
+            margin-top: 0;
+            color: #333;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 5px;
+            margin-bottom: 10px;
+        }
+        
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 0.9em;
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border: 1px solid #ccc;
+            margin-right: 10px;
+        }
+
+        /* Overlay Peta */
+        .map-overlay {
+            position: absolute; 
+            top: 10px;
+            right: 10px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            z-index: 10;
+        }
+
+        /* Media Query untuk tampilan mobile: Legenda di bawah Peta */
+        @media (max-width: 992px) {
+            .map-flex-container {
+                flex-direction: column;
+            }
+            .map-frame-container, .legend-container {
+                max-width: 100%;
+                width: 100%;
+            }
+            .legend-container {
+                min-height: auto; /* Hapus min-height di mobile */
+            }
+        }
+    </style>
+    
+</head>
+<body>
+
+<header class="industrial-header">
+    <div class="header-content">
+        <h1>Sistem Informasi Geografis</h1>
+        <h2>Jumlah Industri dan Tenaga Kerja Menurut Kabupaten/Kota di Provinsi Jawa Tengah (2023-2024)</h2>
+    </div>
+</header>
+
+<nav class="industrial-nav">
+    <a href="#deskripsi" class="nav-item">LATAR BELAKANG</a>
+    <a href="#peta" class="nav-item">Peta Sebaran</a>
+    <a href="#data-2024" class="nav-item">Data 2024</a>
+    <a href="#tabel" class="nav-item">Data 2023</a>
+    <a href="#analisis" class="nav-item">Analisis Pertumbuhan</a>
+</nav>
+
+<main class="container">
+    <section id="deskripsi" class="industrial-section">
+        <h3>LATAR BELAKANG</h3>
+        <p>
+            Sektor industri memiliki peran strategis dalam mendorong pertumbuhan ekonomi daerah karena mampu menciptakan nilai tambah serta menyerap tenaga kerja dalam jumlah besar. Provinsi Jawa Tengah sebagai salah satu provinsi dengan jumlah penduduk yang tinggi memiliki struktur industri yang beragam, mulai dari industri mikro dan kecil hingga industri menengah dan besar yang tersebar di berbagai kabupaten/kota. Keberadaan industri, khususnya industri pengolahan, menjadi sumber utama penyerapan tenaga kerja dan berkontribusi terhadap peningkatan kesejahteraan masyarakat.
+            <strong class="highlight"></strong>
+        </p>
+
+
+
+        <p> Namun, perbedaan karakteristik wilayah dan ketersediaan infrastruktur menyebabkan distribusi jumlah industri dan tenaga kerja antar kabupaten/kota di Jawa Tengah tidak merata. Data tahun 2023–2024 menunjukkan adanya variasi dalam konsentrasi industri dan kemampuan penyerapan tenaga kerja di masing-masing daerah. Oleh karena itu, kajian mengenai jumlah industri dan tenaga kerja menurut kabupaten/kota di Provinsi Jawa Tengah penting dilakukan untuk memberikan gambaran kondisi aktual serta menjadi dasar dalam perumusan kebijakan pembangunan industri dan ketenagakerjaan yang lebih efektif dan berkeadilan.</p>
+    </section>
+
+    <hr class="separator">
+
+    <section id="peta" class="industrial-section">
+        <h3>Peta Persebaran Industri & Tenaga Kerja </h3>
+        
+        <div class="map-controls">
+            <button id="btn-2024" class="active">Tampilkan Peta 2024</button>
+            <button id="btn-2023">Tampilkan Peta 2023</button>
+        </div>
+        
+        <div class="map-flex-container">
+            
+            <div class="map-frame-container">
+                <iframe id="map-iframe" src="2024/index.html" class="frame-peta"></iframe> 
+                <div id="map-overlay-year" class="map-overlay">tahun 2024</div>
+            </div>
+
+            <div class="legend-container">
+                <h4>Legenda Peta (Contoh)</h4>
+                
+                <p><strong>Pengelompokan Jumlah industri & Tenaga Kerja:</strong></p>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #eadada;"></div>
+                    <span>Rendah ( &lt; 12.810)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #c04f16;"></div>
+                    <span>Sedang (12.810 - 25.621)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #cb0b0b;"></div>
+                    <span>Tinggi ( &gt; 25.621)</span>
+                </div>
+
+                <p style="margin-top: 20px;">
+                    *Legend ini bersifat ilustratif. Pewarnaan akan mengikuti data 
+                    yang dimuat oleh peta QGIS yang bersangkutan (2024 atau 2023).
+                </p>
+            </div>
+            
+        </div>
+    </section>
+
+    <hr class="separator">
+    
+    <section id="data-2024" class="industrial-section">
+        <h3>Tabel Data Industri & Tenaga Kerja (Tahun 2024 - Data Riil) </h3>
+
+        <div class="table-scroll">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Kabupaten/Kota</th>
+                        <th>Jumlah Industri (2024)</th>
+                        <th>Tenaga Kerja (2024)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>1</td><td>Cilacap</td><td>6.113</td><td>26.149</td></tr>
+                    <tr><td>2</td><td>Banyumas</td><td>11.746</td><td>146.749</td></tr>
+                    <tr><td>3</td><td>Purbalingga</td><td>2.465</td><td>9.507</td></tr>
+                    <tr><td>4</td><td>Banjarnegara</td><td>2.443</td><td>30.428</td></tr>
+                    <tr><td>5</td><td>Kebumen</td><td>3.368</td><td>1.229</td></tr>
+                    <tr class="highlight-row"><td>6</td><td>Purworejo</td><td>38.431</td><td>62.421</td></tr>
+                    <tr><td>7</td><td>Wonosobo</td><td>20.336</td><td>25.697</td></tr>
+                    <tr><td>8</td><td>Magelang</td><td>2.011</td><td>53.214</td></tr>
+                    <tr><td>9</td><td>Boyolali</td><td>6.181</td><td>131.729</td></tr>
+                    <tr><td>10</td><td>Klaten</td><td>1.195</td><td>87.832</td></tr>
+                    <tr><td>11</td><td>Sukoharjo</td><td>11.223</td><td>161.501</td></tr>
+                    <tr><td>12</td><td>Wonogiri</td><td>578</td><td>37.746</td></tr>
+                    <tr><td>13</td><td>Karanganyar</td><td>7.348</td><td>129.932</td></tr>
+                    <tr><td>14</td><td>Sragen</td><td>13.621</td><td>9.023</td></tr>
+                    <tr><td>15</td><td>Grobogan</td><td>3.391</td><td>51.808</td></tr>
+                    <tr><td>16</td><td>Blora</td><td>2.129</td><td>6.176</td></tr>
+                    <tr><td>17</td><td>Rembang</td><td>3.401</td><td>4.009</td></tr>
+                    <tr><td>18</td><td>Pati</td><td>7.121</td><td>97.329</td></tr>
+                    <tr class="highlight-row"><td>19</td><td>Kudus</td><td>4.914</td><td>282.323</td></tr>
+                    <tr class="highlight-row"><td>20</td><td>Jepara</td><td>7.216</td><td>218.969</td></tr>
+                    <tr><td>21</td><td>Demak</td><td>13.274</td><td>111.339</td></tr>
+                    <tr class="highlight-row"><td>22</td><td>Semarang</td><td>5.127</td><td>306.647</td></tr>
+                    <tr><td>23</td><td>Temanggung</td><td>3.047</td><td>39.543</td></tr>
+                    <tr><td>24</td><td>Kendal</td><td>7.388</td><td>99.901</td></tr>
+                    <tr><td>25</td><td>Batang</td><td>3.022</td><td>45.679</td></tr>
+                    <tr><td>26</td><td>Pekalongan</td><td>1.632</td><td>74.726</td></tr>
+                    <tr><td>27</td><td>Pemalang</td><td>1.539</td><td>65.982</td></tr>
+                    <tr><td>28</td><td>Tegal</td><td>3.102</td><td>59.533</td></tr>
+                    <tr><td>29</td><td>Brebes</td><td>779</td><td>72.316</td></tr>
+                    <tr><td>30</td><td>Kota Magelang</td><td>4.553</td><td>8.753</td></tr>
+                    <tr><td>31</td><td>Kota Surakarta</td><td>1.091</td><td>22.245</td></tr>
+                    <tr><td>32</td><td>Kota Salatiga</td><td>1.891</td><td>43.356</td></tr>
+                    <tr class="highlight-row"><td>33</td><td>Kota Semarang</td><td>5.967</td><td>277.725</td></tr>
+                    <tr><td>34</td><td>Kota Pekalongan</td><td>10.323</td><td>3.433</td></tr>
+                    <tr><td>35</td><td>Kota Tegal</td><td>1.904</td><td>10.076</td></tr>
+                    <tr class="summary-row"><td></td><td>PROVINSI JAWA TENGAH (TOTAL)</td><td>243.171</td><td>2.967.566</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <hr class="separator">
+
+    <section id="tabel" class="industrial-section">
+        <h3>Tabel Data Industri & Tenaga Kerja (Tahun 2023 - Data Pembanding) </h3>
+
+        <div class="table-scroll">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Kabupaten/Kota</th>
+                        <th>Jumlah Industri (2023)</th>
+                        <th>Tenaga Kerja (2023)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>1</td><td>Cilacap</td><td>5.976</td><td>26.041</td></tr>
+                    <tr><td>2</td><td>Banyumas</td><td>11.329</td><td>145.156</td></tr>
+                    <tr><td>3</td><td>Purbalingga</td><td>2.212</td><td>94.839</td></tr>
+                    <tr><td>4</td><td>Banjarnegara</td><td>1.558</td><td>28.933</td></tr>
+                    <tr><td>5</td><td>Kebumen</td><td>3.014</td><td>386</td></tr>
+                    <tr><td>6</td><td>Purworejo</td><td>30.071</td><td>46.186</td></tr>
+                    <tr><td>7</td><td>Wonosobo</td><td>19.441</td><td>23.955</td></tr>
+                    <tr><td>8</td><td>Magelang</td><td>19.467</td><td>52.067</td></tr>
+                    <tr><td>9</td><td>Boyolali</td><td>5.591</td><td>129.179</td></tr>
+                    <tr><td>10</td><td>Klaten</td><td>922</td><td>87.409</td></tr>
+                    <tr><td>11</td><td>Sukoharjo</td><td>9.675</td><td>150.151</td></tr>
+                    <tr><td>12</td><td>Wonogiri</td><td>5.417</td><td>37.259</td></tr>
+                    <tr><td>13</td><td>Karanganyar</td><td>5.826</td><td>128.476</td></tr>
+                    <tr><td>14</td><td>Sragen</td><td>13.158</td><td>7.852</td></tr>
+                    <tr><td>15</td><td>Grobogan</td><td>3.132</td><td>51.213</td></tr>
+                    <tr><td>16</td><td>Blora</td><td>1.988</td><td>6.009</td></tr>
+                    <tr><td>17</td><td>Rembang</td><td>3.045</td><td>39.085</td></tr>
+                    <tr><td>18</td><td>Pati</td><td>6.109</td><td>95.312</td></tr>
+                    <tr class="highlight-row"><td>19</td><td>Kudus</td><td>4.719</td><td>281.196</td></tr>
+                    <tr class="highlight-row"><td>20</td><td>Jepara</td><td>7.013</td><td>218.445</td></tr>
+                    <tr><td>21</td><td>Demak</td><td>12.939</td><td>110.684</td></tr>
+                    <tr class="highlight-row"><td>22</td><td>Semarang</td><td>4.624</td><td>303.627</td></tr>
+                    <tr><td>23</td><td>Temanggung</td><td>2.283</td><td>35.053</td></tr>
+                    <tr><td>24</td><td>Kendal</td><td>6.989</td><td>78.999</td></tr>
+                    <tr><td>25</td><td>Batang</td><td>2.472</td><td>45.175</td></tr>
+                    <tr><td>26</td><td>Pekalongan</td><td>1.549</td><td>74.584</td></tr>
+                    <tr><td>27</td><td>Pemalang</td><td>1.321</td><td>61.828</td></tr>
+                    <tr><td>28</td><td>Tegal</td><td>2.717</td><td>58.393</td></tr>
+                    <tr><td>29</td><td>Brebes</td><td>582</td><td>72.159</td></tr>
+                    <tr><td>30</td><td>Kota Magelang</td><td>4.438</td><td>8.708</td></tr>
+                    <tr><td>31</td><td>Kota Surakarta</td><td>882</td><td>20.847</td></tr>
+                    <tr><td>32</td><td>Kota Salatiga</td><td>1.717</td><td>43.185</td></tr>
+                    <tr class="highlight-row"><td>33</td><td>Kota Semarang</td><td>5.068</td><td>271.781</td></tr>
+                    <tr><td>34</td><td>Kota Pekalongan</td><td>8.938</td><td>28.826</td></tr>
+                    <tr><td>35</td><td>Kota Tegal</td><td>1.701</td><td>8.088</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <hr class="separator">
+
+    <section id="analisis" class="industrial-section">
+        <h3>Analisis Data Kunci & Komparasi (2024) </h3>
+        <p>
+            Dengan tersedianya data riil tahun 2024, kami dapat mengidentifikasi beberapa tren kunci:
+        </p>
+
+        <p>
+            Industri Terbanyak (2024): Kabupaten Purworejo mempertahankan posisinya sebagai wilayah dengan jumlah industri terbanyak, melonjak signifikan menjadi <strong class="key-data">38.431</strong> industri. Ini mengindikasikan dominasi industri skala kecil atau rumahan yang berkembang pesat.
+        </p>
+        <p>
+            Tenaga Kerja Terbesar (2024): Kabupaten Semarang memimpin dengan <strong class="key-data">306.647</strong> tenaga kerja, diikuti ketat oleh Kudus (<strong class="key-data">282.323</strong>) dan Kota Semarang (<strong class="key-data">277.725</strong>).
+        </p>
+
+        <h4>Perbandingan Pertumbuhan Industri (5 Terbesar 2024)</h4>
+        <div class="table-scroll">
+            <table class="data-table small-table">
+                <thead>
+                    <tr><th>Kabupaten/Kota</th><th>Industri 2023</th><th>Industri 2024</th><th>Pertumbuhan (%)</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Purworejo</td><td>30.071</td><td>38.431</td><td><strong class="positive-growth">+27.79%</strong></td></tr>
+                    <tr><td>Wonosobo</td><td>19.441</td><td>20.336</td><td><strong class="positive-growth">+4.60%</strong></td></tr>
+                    <tr><td>Magelang (Kab.)</td><td>19.467</td><td>2.011</td><td><strong class="negative-growth">-89.68%</strong></td></tr>
+                    <tr><td>Sragen</td><td>13.158</td><td>13.621</td><td><strong class="positive-growth">+3.52%</strong></td></tr>
+                    <tr><td>Demak</td><td>12.939</td><td>13.274</td><td><strong class="positive-growth">+2.60%</strong></td></tr>
+                </tbody>
+            </table>
+        </div>
+  
+
+
+          <h2>Diagram Perbandingan jumlah Industri</h5>
+            <div class="container">
+            <img src="Chart jumlah industri.png" alt="Foto Profil" width="500" height="400" class="Tengah">
+            </div>
+        <h4>Perbandingan Pertumbuhan Tenaga Kerja (5 Terbesar 2024)</h4>
+        <div class="table-scroll">
+            <table class="data-table small-table">
+                <thead>
+                    <tr><th>Kabupaten/Kota</th><th>Tenaga Kerja 2023</th><th>Tenaga Kerja 2024</th><th>Pertumbuhan (%)</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Semarang (Kab.)</td><td>303.627</td><td>306.647</td><td><strong class="positive-growth">+1.00%</strong></td></tr>
+                    <tr><td>Kudus</td><td>281.196</td><td>282.323</td><td><strong class="positive-growth">+0.40%</strong></td></tr>
+                    <tr><td>Kota Semarang</td><td>271.781</td><td>277.725</td><td><strong class="positive-growth">+2.19%</strong></td></tr>
+                    <tr><td>Jepara</td><td>218.445</td><td>218.969</td><td><strong class="positive-growth">+0.24%</strong></td></tr>
+                    <tr><td>Sukoharjo</td><td>150.151</td><td>161.501</td><td><strong class="positive-growth">+7.56%</strong></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="note-box">
+            <p>
+                Sukoharjo menunjukkan pertumbuhan tenaga kerja tertinggi di antara 5 wilayah padat karya terbesar (+7.56%). Perlu dilakukan validasi ulang data Kabupaten Magelang (-89.68%) karena anomali penurunan unit industri yang sangat ekstrem.
+            </p>
+            
+        </div> 
+
+
+      
+    </section>
+</main>
+
+<footer class="industrial-footer">
+    <p>© 2025 | Sistem Informasi Geografis — Jawa Tengah. <span class="monospaced">DATA FEED VERSION 2.1.0</span></p>
+</footer>
+
+<script>
+    // 1. Dapatkan elemen yang dibutuhkan
+    const mapIframe = document.getElementById('map-iframe');
+    const mapOverlay = document.getElementById('map-overlay-year');
+    const btn2024 = document.getElementById('btn-2024');
+    const btn2023 = document.getElementById('btn-2023');
+
+    // 2. Fungsi untuk mengganti peta
+    function switchMap(year) {
+        if (year === '2024') {
+            mapIframe.src = '2024/index.html'; // Path peta 2024
+            mapOverlay.textContent = 'tahun 2024';
+            btn2024.classList.add('active');
+            btn2023.classList.remove('active');
+        } else if (year === '2023') {
+            mapIframe.src = '2023/index.html'; // Path peta 2023
+            mapOverlay.textContent = 'tahun 2023';
+            btn2023.classList.add('active');
+            btn204.classList.remove('active');
+        }
+    }
+
+    // 3. Tambahkan Event Listener ke tombol
+    btn2024.addEventListener('click', () => switchMap('2024'));
+    btn2023.addEventListener('click', () => switchMap('2023'));
+</script>
+
+</body>
+</html>

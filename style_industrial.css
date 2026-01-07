@@ -1,0 +1,233 @@
+/* Palet Warna Industrial */
+:root {
+    --color-background: #1e1e1e; /* Hitam Gelap */
+    --color-primary: #333333; /* Abu-abu Gelap */
+    --color-secondary: #555555; /* Abu-abu Sedang */
+    --color-text: #e0e0e0; /* Putih Muda */
+    --color-highlight: #ffcc00; /* Kuning/Oranye Terang (Aksen) */
+    --color-border: #444444; /* Garis Pemisah */
+}
+
+/* Reset dan Tipografi */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: var(--color-background);
+    color: var(--color-text);
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* HEADER */
+.industrial-header {
+    background-color: var(--color-primary);
+    padding: 40px 0;
+    border-bottom: 5px solid var(--color-highlight);
+    text-align: center;
+    color: white;
+}
+
+.industrial-header h1 {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 2.5em;
+    margin-bottom: 5px;
+    letter-spacing: 3px;
+    color: var(--color-highlight);
+}
+
+.industrial-header h2 {
+    font-size: 1.1em;
+    font-weight: 400;
+    opacity: 0.8;
+}
+
+/* NAVIGATION */
+.industrial-nav {
+    background-color: var(--color-secondary);
+    text-align: center;
+    padding: 10px 0;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.nav-item {
+    font-family: 'Roboto Mono', monospace;
+    color: var(--color-text);
+    text-decoration: none;
+    padding: 10px 20px;
+    display: inline-block;
+    transition: background-color 0.3s, color 0.3s;
+    border-right: 1px solid var(--color-border);
+}
+
+.nav-item:last-child {
+    border-right: none;
+}
+
+.nav-item:hover {
+    background-color: var(--color-highlight);
+    color: var(--color-primary);
+    font-weight: bold;
+}
+
+/* SECTIONS */
+.industrial-section {
+    padding: 40px 0;
+}
+
+.industrial-section h3 {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 1.8em;
+    border-left: 5px solid var(--color-highlight);
+    padding-left: 15px;
+    margin-bottom: 25px;
+    text-transform: uppercase;
+}
+
+/* TEXT HIGHLIGHTS */
+.highlight {
+    color: var(--color-highlight);
+    font-weight: 700;
+}
+
+.key-data {
+    color: var(--color-highlight);
+    font-family: 'Roboto Mono', monospace;
+    font-weight: 700;
+}
+
+.note-box {
+    background-color: #333333;
+    border-left: 4px solid var(--color-highlight);
+    padding: 15px;
+    margin-top: 20px;
+    font-style: italic;
+    font-family: 'Roboto Mono', monospace;
+}
+
+/* PETA IFRAME */
+.map-frame-container {
+    position: relative;
+    padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+    height: 0;
+    overflow: hidden;
+    border: 3px solid var(--color-border);
+    box-shadow: 0 0 10px rgba(255, 204, 0, 0.3); /* Cahaya Kuning */
+}
+
+.frame-peta {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+.map-overlay {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: var(--color-highlight);
+    padding: 5px 10px;
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.8em;
+    border: 1px dashed var(--color-highlight);
+    z-index: 10;
+}
+
+
+/* TABLE STYLING */
+.table-scroll {
+    overflow-x: auto;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.9em;
+}
+
+.data-table th, .data-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.data-table th {
+    background-color: var(--color-secondary);
+    color: white;
+    text-transform: uppercase;
+    border-top: 2px solid var(--color-highlight);
+    border-bottom: 2px solid var(--color-highlight);
+}
+
+.data-table tr:nth-child(even) {
+    background-color: #1c1b1b; /* Garis-garis Zebra */
+}
+
+.data-table tr:hover {
+    background-color: #1b1919;
+    color: var(--color-highlight);
+    cursor: default;
+}
+
+.highlight-row {
+    background-color: #2c2b2b !important;
+    border-left: 4px solid var(--color-highlight);
+}
+
+/* SEPARATOR */
+.separator {
+    border: 0;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--color-border), transparent);
+    margin: 40px 0;
+}
+
+/* FOOTER */
+.industrial-footer {
+    background-color: var(--color-primary);
+    color: var(--color-text);
+    text-align: center;
+    padding: 15px 0;
+    font-size: 0.9em;
+    border-top: 3px solid var(--color-highlight);
+}
+
+.monospaced {
+    font-family: 'Roboto Mono', monospace;
+    color: var(--color-highlight);
+}
+
+/* Responsiveness for smaller screens */
+@media (max-width: 768px) {
+    .industrial-header h1 {
+        font-size: 2em;
+    }
+
+    .industrial-header h2 {
+        font-size: 0.9em;
+    }
+
+    .nav-item {
+        display: block;
+        border-right: none;
+        border-bottom: 1px solid var(--color-border);
+    }
+}
